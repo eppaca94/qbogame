@@ -1,14 +1,15 @@
-import express from 'express'
+import { Router } from 'express'
 import { register, login } from '../controllers/auth.controller.js'
 
-const router = express.Router()
+const router = Router()
 
-// 🛠 Ruta para registrar usuario
-// POST /api/auth/register
+// Ruta para registrar usuario
 router.post('/register', register)
 
-// 🛠 Ruta para iniciar sesión
-// POST /api/auth/login
+// Ruta para iniciar sesión
 router.post('/login', login)
 
 export default router
+
+
+    

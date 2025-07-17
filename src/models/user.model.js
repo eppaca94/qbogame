@@ -5,20 +5,26 @@ import jwt from 'jsonwebtoken'
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: true,
+    required: [true, 'El nombre de usuario es obligatorio'],
     unique: true,
-    trim: true // Elimina espacios innecesarios
+    trim: true
   },
   email: {
     type: String,
-    required: true,
+    required: [true, 'El correo electrónico es obligatorio'],
     unique: true,
-    lowercase: true
+    lowercase: true,
+    match: [/.+@.+\..+/, 'Debe ser un correo válido']
   },
   password: {
     type: String,
-    required: true,
-    minlength: 6
+    required: [true, 'La contraseña es obligatoria'],
+    minlength: [6, 'La contraseña debe tener al menos 6 caracteres']
+  },
+  role: {
+    type: String,
+    enum: ['player', 'admin'],
+    default: 'player'
   }
 }, {
   timestamps: true
@@ -40,7 +46,7 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
 // 🔑 Método para generar token JWT
 userSchema.methods.generateToken = function () {
   return jwt.sign(
-    { id: this._id, username: this.username },
+    { id: this._id, username: this.username, role: this.role },
     process.env.JWT_SECRET,
     { expiresIn: '7d' }
   )

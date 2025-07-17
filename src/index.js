@@ -1,40 +1,24 @@
-// 📦 Importación de módulos externos
 import express from 'express'
-import mongoose from 'mongoose'
-import dotenv from 'dotenv'
 import cors from 'cors'
-
-// 📁 Importación de rutas
+import dotenv from 'dotenv'
+import { connectDB } from './config/db.js'
 import authRoutes from './routes/auth.routes.js'
 
-// 🛠️ Cargar variables de entorno
 dotenv.config()
 
-// 🚀 Crear instancia de la app
 const app = express()
+app.use(cors())
+app.use(express.json())
 
-// 🧩 Middlewares globales
-app.use(cors()) // Habilita CORS
-app.use(express.json()) // Parsear JSON
-
-// 🔗 Rutas principales
+// 🔗 Rutas
 app.use('/api/auth', authRoutes)
 
-// 🔌 Conexión a MongoDB Atlas
-mongoose.connect(process.env.MONGODB_URI, {
-  // Opcional desde mongoose v6+, pero puedes agregar:
-  // useNewUrlParser: true,
-  // useUnifiedTopology: true,
-})
-  .then(() => {
-    console.log('✅ Conectado a MongoDB')
+// 🚀 Servidor y conexión a DB
+const PORT = process.env.PORT || 3000
 
-    // 🚀 Iniciar el servidor
-    const port = process.env.PORT || 3000
-    app.listen(process.env.PORT, () => {
+connectDB().then(() => {
+  app.listen(process.env.PORT, () => {
   console.log(`🚀 Servidor en http://localhost:${process.env.PORT}`)
 })
-  })
-  .catch((err) => {
-    console.error('❌ Error al conectar MongoDB:', err.message)
-  })
+
+})
